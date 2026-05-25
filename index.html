@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prisoner's Dilemma Tournament</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header class="app-header">
+    <div class="hinner">
+      <div>
+        <h1 class="app-title">Prisoner's Dilemma Tournament</h1>
+        <p class="app-sub">Iterated game theory · replicator dynamics · emergence of cooperation</p>
+      </div>
+      <div class="status-badge">
+        <span class="bdot" id="bdot"></span>
+        <span id="status-text">Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <!-- Strategies -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Strategies</h2>
+          <span class="act-count" id="active-count">9 active</span>
+        </div>
+        <div id="strategy-list"></div>
+      </div>
+
+      <!-- Settings -->
+      <div class="panel">
+        <div class="panel-head"><h2>Settings</h2></div>
+
+        <div class="settings">
+          <div>
+            <div class="sl"><span>Rounds / match</span><span class="sv" id="rounds-val">200</span></div>
+            <input type="range" id="rounds" min="50" max="500" value="200" step="50" />
+          </div>
+          <div>
+            <div class="sl"><span>Generations</span><span class="sv" id="gens-val">40</span></div>
+            <input type="range" id="generations" min="10" max="100" value="40" step="5" />
+          </div>
+          <div>
+            <div class="sl"><span>Mutation rate</span><span class="sv" id="noise-val">3%</span></div>
+            <input type="range" id="noise" min="0" max="15" value="3" step="1" />
+          </div>
+
+          <!-- Payoff matrix -->
+          <div class="payoffs">
+            <div class="payoffs-title">Payoff matrix</div>
+            <div class="pg">
+              <div class="pc">
+                <label>R · both cooperate</label>
+                <input type="number" id="pay-R" value="3" min="0" max="9" />
+              </div>
+              <div class="pc">
+                <label>T · defect vs coop</label>
+                <input type="number" id="pay-T" value="5" min="0" max="9" />
+              </div>
+              <div class="pc">
+                <label>P · both defect</label>
+                <input type="number" id="pay-P" value="1" min="0" max="9" />
+              </div>
+              <div class="pc">
+                <label>S · coop vs defect</label>
+                <input type="number" id="pay-S" value="0" min="0" max="9" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="run-btn">
+            <span class="bi">▶</span> Run Tournament
+          </button>
+          <button class="btn btn-sec" id="evolve-btn">
+            <span class="bi">⟳</span> Evolve
+          </button>
+        </div>
+        <button class="btn btn-ghost" id="reset-btn">Reset</button>
+      </div>
+
+    </aside>
+
+    <!-- ── Main ─────────────────────────────────────────────────────────── -->
+    <main class="main">
+
+      <!-- Score matrix -->
+      <div class="panel matrix-panel">
+        <div class="panel-head">
+          <div>
+            <h2>Score Matrix</h2>
+            <p class="panel-desc">Avg pts/round · green = high · click a cell to replay that matchup</p>
+          </div>
+          <div class="mx-legend">
+            <span>low</span><div class="mx-bar"></div><span>high</span>
+          </div>
+        </div>
+        <div id="matrix-container">
+          <div class="empty-state">
+            <div class="ei">⚔</div>
+            <p>Run the tournament to see how each strategy fares against every other</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evolution chart -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Population Evolution</h2>
+            <p class="panel-desc">Which strategies survive evolutionary pressure? Replicator dynamics across generations.</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="evo-chart"></canvas>
+          <div id="chart-empty" class="empty-state">
+            <div class="ei">📈</div>
+            <p>Click "Evolve" to simulate natural selection between strategies</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Match replay -->
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Match Replay</h2>
+            <p class="panel-desc" id="replay-desc">Select any cell in the score matrix above</p>
+          </div>
+          <div class="replay-ph" id="replay-stats" style="display:none"></div>
+        </div>
+        <div id="replay-container">
+          <div class="empty-state">
+            <div class="ei">🔍</div>
+            <p>Click any cell in the score matrix to see that matchup round-by-round</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
