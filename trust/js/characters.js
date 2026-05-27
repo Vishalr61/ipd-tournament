@@ -33,7 +33,7 @@ export const CHARACTERS = [
       "Nothing you did was going to change the math.",
     ],
     revealName: 'Always Defect',
-    revealExplanation: "Marcus took every round, no matter what. Always Defect. It can't be reasoned with, but it also can't build anything. Against another AllD, the result is mutual destruction. The strategies that do best long-term all start by cooperating.",
+    revealExplanation: "Marcus took every round, no matter what. Always Defect. It can't be reasoned with, but it also can't build anything. Against another defector, the result is mutual destruction. The strategies that do best long-term all start by cooperating.",
   },
   {
     id: 'maya',
@@ -51,7 +51,7 @@ export const CHARACTERS = [
       "You took, so she took. You gave her nothing to work with. She would have cooperated every round if you had started differently. The first move was always yours.",
     ],
     revealName: 'Tit-for-Tat',
-    revealExplanation: "Maya did whatever you did last round. Tit-for-Tat. Cooperate first, then mirror. It won the first computer tournament of this kind, run by Robert Axelrod in 1980. Simple, fair, and hard to exploit.",
+    revealExplanation: "Maya did whatever you did last round. Tit-for-Tat. Cooperate first, then mirror. Simple, fair, and hard to exploit.",
   },
   {
     id: 'theo',
@@ -69,7 +69,7 @@ export const CHARACTERS = [
       "After that, nothing you did mattered. There was no apology that would have worked. He had already closed the door.",
     ],
     revealName: 'Grim Trigger',
-    revealExplanation: "Theo cooperated until you betrayed him, then defected forever. Grim Trigger. It cooperates, until it doesn't. After that, the door is closed.",
+    revealExplanation: "Theo cooperated until you defected once, then defected forever. Grim Trigger. It cooperates, until it doesn't. After that, the door is closed.",
   },
   {
     id: 'naomi',
@@ -105,6 +105,6 @@ export const CHARACTERS = [
       "Whatever worked, they kept. Whatever didn't, they dropped. You made taking work, so they took.",
     ],
     revealName: 'Win-Stay, Lose-Shift',
-    revealExplanation: "Ren used Win-Stay, Lose-Shift. If a round went well, repeat it. If it went badly, switch. Not watching you — watching outcomes. It's adaptive, not reactive, and it's surprisingly robust against both cooperators and defectors.",
+    revealExplanation: "Ren used Win-Stay, Lose-Shift. If a round went well, repeat it. If it went badly, switch. Not watching you. Watching outcomes. It's adaptive, not reactive, and it's surprisingly robust against both cooperators and defectors.",
   },
 ];

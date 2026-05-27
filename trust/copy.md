@@ -121,8 +121,25 @@ Whatever worked, they kept. Whatever didn't, they dropped.
 ### Intro line
 You just met six strategies in disguise.
 
-### Ren extended explanation (Pavlov is opaque — needs a paragraph)
-Ren played something called Win-Stay, Lose-Shift. If a round went well for them — they got a high score — they did the same thing next time. If it went badly, they switched. Not watching you. Not punishing you. Just tracking outcomes and adjusting. It's adaptive, not reactive. And it's more successful than you might expect.
+### Reveal explanations
+
+**Sam — Always Cooperate**
+Sam shared every round, no matter what. Always Cooperate. It's the most generous strategy. It's also the easiest to exploit. The world is harder on Sams than it should be.
+
+**Marcus — Always Defect**
+Marcus took every round, no matter what. Always Defect. It can't be reasoned with, but it also can't build anything. Against another defector, the result is mutual destruction. The strategies that do best long-term all start by cooperating.
+
+**Maya — Tit-for-Tat**
+Maya did whatever you did last round. Tit-for-Tat. Cooperate first, then mirror. Simple, fair, and hard to exploit.
+
+**Theo — Grim Trigger**
+Theo cooperated until you defected once, then defected forever. Grim Trigger. It cooperates, until it doesn't. After that, the door is closed.
+
+**Naomi — Tit-for-Two-Tats**
+Naomi needed two defections in a row before she'd retaliate. Tit-for-Two-Tats. More forgiving than the mirror. In the real world, where people make mistakes, that forgiveness often makes it more stable.
+
+**Ren — Win-Stay, Lose-Shift**
+Ren used Win-Stay, Lose-Shift. If a round went well, repeat it. If it went badly, switch. Not watching you. Watching outcomes. It's adaptive, not reactive, and it's surprisingly robust against both cooperators and defectors.
 
 ---
 
