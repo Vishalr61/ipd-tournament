@@ -48,7 +48,7 @@ function buildRevealDOM(el) {
 
     <div class="reveal-cast">
       ${CHARACTERS.map(char => `
-        <div class="reveal-cast-row" data-char="${char.id}">
+        <div class="reveal-cast-row" data-char="${char.id}" style="--row-color:${char.color}">
           <div class="reveal-row-pip" style="background:${char.color}"></div>
           <div class="reveal-row-body">
             <span class="reveal-char-label">${char.name}
