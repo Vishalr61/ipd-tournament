@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>The Trust Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── View: Cold open ──────────────────────────────────────────────────── -->
+  <section id="view-cold-open" class="view" role="main">
+    <div class="cold-open-text" aria-live="polite">
+      <span class="line">You and a stranger.</span>
+      <span class="line">One choice.</span>
+      <span class="line">Trust them, or take what you can.</span>
+    </div>
+    <p class="cold-open-tap">tap anywhere to continue</p>
+    <button class="btn btn-ghost" data-action="continue" aria-label="Continue"
+      style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;">
+    </button>
+  </section>
+
+  <!-- ── View: Dilemma ────────────────────────────────────────────────────── -->
+  <section id="view-dilemma" class="view" role="main">
+    <div class="dilemma-body">
+      <p class="dilemma-prose">
+        You can share, or you can take.
+        <span class="pause">They can share, or they can take.</span>
+        <span class="pause">Neither of you can see the other's choice.</span>
+      </p>
+
+      <!-- Reveal (hidden until after choice) -->
+      <div class="dilemma-reveal" style="display:none; flex-direction:column; gap:16px; width:100%;">
+        <div class="reveal-row">
+          <div class="reveal-side reveal-your">
+            <span class="label">You</span>
+            <span class="move-chip"></span>
+          </div>
+          <span class="reveal-vs">vs</span>
+          <div class="reveal-side reveal-their">
+            <span class="label">Stranger</span>
+            <span class="move-chip"></span>
+          </div>
+        </div>
+
+        <div class="reveal-payoff"><!-- filled by JS --></div>
+
+        <div class="after-dilemma">
+          <p class="after-dilemma-text">
+            That's the dilemma.
+            <span class="pause">Now imagine playing it ten times. With the same person.</span>
+            <span class="pause em">Or a hundred.</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Question (hidden after choice) -->
+      <div class="dilemma-question-wrap">
+        <p class="dilemma-question">What do you do?</p>
+      </div>
+    </div>
+
+    <div class="btn-area">
+      <button class="btn btn-share" data-action="share">Share</button>
+      <button class="btn btn-take"  data-action="take">Take</button>
+      <!-- Continue appears after reveal -->
+      <button class="btn btn-primary" data-action="continue" style="display:none;">
+        Meet your first opponent →
+      </button>
+    </div>
+  </section>
+
+  <!-- ── View: Character intro card ───────────────────────────────────────── -->
+  <section id="view-intro-card" class="view" role="main">
+    <div class="char-intro-body">
+      <div class="char-silhouette-wrap" aria-hidden="true"><!-- filled by JS --></div>
+      <h1 class="char-name"></h1>
+      <p class="char-intro-text"></p>
+    </div>
+    <div class="btn-area">
+      <button class="btn btn-neutral" data-action="begin-match">Play →</button>
+    </div>
+  </section>
+
+  <!-- ── View: Match ──────────────────────────────────────────────────────── -->
+  <section id="view-match" class="view" role="main">
+    <div class="match-header w-full">
+      <span class="match-char-pip" aria-hidden="true"></span>
+      <span class="match-char-name"></span>
+      <span class="match-round-label"></span>
+    </div>
+
+    <div class="match-body">
+      <!-- Scores -->
+      <div class="score-bar w-full">
+        <div class="score-side">
+          <span class="score-who">You</span>
+          <span class="score-value you">0</span>
+        </div>
+        <div class="score-side" style="align-items:flex-end;">
+          <span class="score-who them"></span>
+          <span class="score-value them" style="text-align:right;">0</span>
+        </div>
+      </div>
+
+      <!-- Move reveal -->
+      <div class="round-reveal w-full">
+        <div class="moves-row">
+          <div class="move-cell">
+            <span class="move-label">You</span>
+            <div class="move-token empty" data-side="you" aria-live="polite"></div>
+          </div>
+          <span class="move-vs">vs</span>
+          <div class="move-cell" style="align-items:flex-end;">
+            <span class="move-label" style="text-align:right;">Them</span>
+            <div class="move-token empty" data-side="them" aria-live="polite"></div>
+          </div>
+        </div>
+        <p class="round-outcome" aria-live="polite"></p>
+      </div>
+
+      <!-- Outcome dots -->
+      <div class="dots-row" aria-hidden="true"></div>
+    </div>
+
+    <div class="btn-area">
+      <button class="btn btn-share" data-action="share">Share</button>
+      <button class="btn btn-take"  data-action="take">Take</button>
+    </div>
+  </section>
+
+  <!-- ── View: Match summary ──────────────────────────────────────────────── -->
+  <section id="view-summary" class="view" role="main">
+    <div class="summary-body">
+      <div class="summary-final-scores">
+        <div class="summary-score">
+          <span class="summary-score-who">You</span>
+          <span class="summary-score-value you"></span>
+        </div>
+        <span class="summary-score-divider">—</span>
+        <div class="summary-score">
+          <span class="summary-score-who them"></span>
+          <span class="summary-score-value them"></span>
+        </div>
+      </div>
+
+      <div class="summary-dots" aria-hidden="true"></div>
+
+      <div class="summary-text" aria-live="polite"></div>
+    </div>
+
+    <div class="btn-area">
+      <button class="btn btn-neutral" data-action="continue">Continue →</button>
+    </div>
+  </section>
+
+  <!-- ── View: Reveal ─────────────────────────────────────────────────────── -->
+  <section id="view-reveal" class="view" role="main"
+    style="justify-content:flex-start; padding-top: max(env(safe-area-inset-top), 48px); padding-bottom: max(env(safe-area-inset-bottom), 48px);">
+
+    <div style="width:100%; text-align:center; margin-bottom:40px;">
+      <h1 class="heading" style="font-size:clamp(1.4rem,6vw,2rem);">
+        You just met six strategies in disguise.
+      </h1>
+    </div>
+
+    <div id="reveal-list" style="width:100%; display:flex; flex-direction:column; gap:20px;"></div>
+
+    <div class="btn-area" style="margin-top:40px;">
+      <a href="../index.html" class="btn btn-ghost" style="text-align:center; text-decoration:none;">
+        The full tournament tool →
+      </a>
+      <a href="../spatial/" class="btn btn-ghost" style="text-align:center; text-decoration:none;">
+        The territorial simulator →
+      </a>
+    </div>
+  </section>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
