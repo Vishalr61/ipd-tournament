@@ -515,6 +515,7 @@ h1, h2, .heading {
 .dot.exploited    { background: var(--take); }
 .dot.exploiter    { background: var(--share-dim); }
 .dot.active       { transform: scale(1.4); background: var(--fg); }
+.dot.trigger      { background: transparent !important; border: 2px solid var(--take); transform: scale(1.2); }
 
 /* ── Match summary ─────────────────────────────────────────────────────────── */
 #view-summary {

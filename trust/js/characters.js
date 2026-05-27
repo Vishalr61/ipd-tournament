@@ -6,7 +6,11 @@ export const CHARACTERS = [
     rounds: 3,
     strategyId: 'allC',
     intro: "Sam. The friend who covered your rent that month you don't talk about. You've never paid him back and he's never asked.",
-    summary: [
+    summaryC: [
+      "Sam always shared.",
+      "He would have kept going as long as you did.",
+    ],
+    summaryD: [
       "Sam always shared. Even when you didn't.",
       "He never asked you to stop.",
     ],
@@ -20,7 +24,11 @@ export const CHARACTERS = [
     rounds: 3,
     strategyId: 'allD',
     intro: "Marcus. Your old roommate. He still owes you for the last two months of utilities. He's been saying he'll pay you back since 2019.",
-    summary: [
+    summaryC: [
+      "He always took. That was the play.",
+      "Nothing you did was going to change the math. You kept sharing. He kept taking. That's who Marcus is.",
+    ],
+    summaryD: [
       "He always took. That was the play.",
       "Nothing you did was going to change the math.",
     ],
@@ -34,9 +42,13 @@ export const CHARACTERS = [
     rounds: 8,
     strategyId: 'tft',
     intro: "Maya. Your business partner. Three years and she's never once taken more than her share.",
-    summary: [
+    summaryC: [
       "She was just matching you.",
       "Maya would have given you everything if you had. Whatever you chose, she chose back. The first move was always yours.",
+    ],
+    summaryD: [
+      "She was just matching you.",
+      "You took, so she took. You gave her nothing to work with. She would have cooperated every round if you had started differently. The first move was always yours.",
     ],
     revealName: 'Tit-for-Tat',
     revealNote: null,
@@ -48,7 +60,11 @@ export const CHARACTERS = [
     rounds: 5,
     strategyId: 'grim',
     intro: "Your cousin Theo. He hasn't spoken to your aunt since 2017. Nobody else in the family remembers what she did.",
-    summary: [
+    summaryC: [
+      "Theo gave generously. You gave generously back.",
+      "He would have kept going. Some people just need to know you're not going to hurt them.",
+    ],
+    summaryD: [
       "Theo gave generously, right up until you took.",
       "After that, nothing you did mattered. There was no apology that would have worked. He had already closed the door.",
     ],
@@ -62,7 +78,11 @@ export const CHARACTERS = [
     rounds: 5,
     strategyId: 'tf2t',
     intro: "Your sister Naomi. She's the patient one. She always has been.",
-    summary: [
+    summaryC: [
+      "Naomi let things go. Because you let things go.",
+      "She wasn't naive — she was watching the whole time. She just gave you room to be a person. You did.",
+    ],
+    summaryD: [
       "Naomi let things slide. Once. Twice, sometimes.",
       "She wasn't naive — she was watching the whole time. She just gave you room to be a person. Until you weren't.",
     ],
@@ -76,9 +96,13 @@ export const CHARACTERS = [
     rounds: 8,
     strategyId: 'pavlov',
     intro: "Ren. The friend who thinks in patterns. You've never quite been able to predict them.",
-    summary: [
+    summaryC: [
       "Ren wasn't watching you. They were watching what happened.",
-      "Whatever worked, they kept. Whatever didn't, they dropped.",
+      "Whatever worked, they kept. Whatever didn't, they dropped. And sharing kept working — so they kept sharing.",
+    ],
+    summaryD: [
+      "Ren wasn't watching you. They were watching what happened.",
+      "Whatever worked, they kept. Whatever didn't, they dropped. You made taking work, so they took.",
     ],
     revealName: 'Win-Stay, Lose-Shift',
     revealNote: "Ren played something called Win-Stay, Lose-Shift. If a round went well for them — they got a high score — they did the same thing next time. If it went badly, they switched. Not watching you. Not punishing you. Just tracking outcomes and adjusting. It's adaptive, not reactive. And it's more successful than you might expect.",

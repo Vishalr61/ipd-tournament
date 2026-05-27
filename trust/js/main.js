@@ -3,12 +3,13 @@ import { buildSilhouette } from './silhouette.js';
 import { initColdOpen, initDilemma } from './views/intro.js';
 import { initMatchView, startMatch } from './views/match-view.js';
 import { initSummaryView, showSummary } from './views/summary-view.js';
+import { getSavedProgress, clearProgress, markCampaignDone } from './progress.js';
 
 // ── Router ────────────────────────────────────────────────────────────────────
 
-const VIEWS = ['cold-open', 'dilemma', 'intro-card', 'match', 'summary', 'reveal'];
+const VIEWS = ['cold-open', 'dilemma', 'intro-card', 'match', 'summary', 'campaign-end', 'reveal'];
 
-function navigate(viewName, params = {}) {
+export function navigate(viewName, params = {}) {
   VIEWS.forEach(v => document.getElementById(`view-${v}`)?.classList.remove('active'));
 
   const target = document.getElementById(`view-${viewName}`);
@@ -23,6 +24,10 @@ function navigate(viewName, params = {}) {
 
   if (viewName === 'summary' && params.match) {
     showSummary(params.charIndex, params.match);
+  }
+
+  if (viewName === 'campaign-end') {
+    markCampaignDone();
   }
 
   if (viewName === 'reveal') {
@@ -47,7 +52,6 @@ function renderIntroCard(charIndex) {
 function renderReveal() {
   const listEl = document.getElementById('reveal-list');
   listEl.innerHTML = '';
-
   CHARACTERS.forEach(char => {
     const item = document.createElement('div');
     item.className = 'reveal-item';
@@ -62,7 +66,7 @@ function renderReveal() {
   });
 }
 
-// ── Boot ──────────────────────────────────────────────────────────────────────
+// ── Boot & resume ─────────────────────────────────────────────────────────────
 
 function boot() {
   initColdOpen(navigate);
@@ -70,7 +74,29 @@ function boot() {
   initMatchView(navigate);
   initSummaryView(navigate);
 
-  navigate('cold-open');
+  // Campaign-end "play again" button
+  document.getElementById('view-campaign-end')
+    ?.querySelector('[data-action="play-again"]')
+    ?.addEventListener('click', () => {
+      clearProgress();
+      navigate('cold-open');
+    });
+
+  // Campaign-end "reveal" button
+  document.getElementById('view-campaign-end')
+    ?.querySelector('[data-action="reveal"]')
+    ?.addEventListener('click', () => navigate('reveal'));
+
+  // Resume from saved progress
+  const saved = getSavedProgress();
+  if (saved?.done) {
+    navigate('campaign-end');
+  } else if (saved?.charIndex !== undefined) {
+    // Resume at the start of wherever they left off
+    navigate('intro-card', { characterIndex: saved.charIndex });
+  } else {
+    navigate('cold-open');
+  }
 }
 
 boot();

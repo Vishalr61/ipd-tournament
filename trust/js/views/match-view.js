@@ -1,5 +1,6 @@
 import { CHARACTERS } from '../characters.js';
 import { createMatch } from '../match.js';
+import { saveProgress, markCompleted } from '../progress.js';
 
 let go        = null;
 let match     = null;
@@ -21,7 +22,6 @@ export function startMatch(idx) {
   busy      = false;
 
   const el = document.getElementById('view-match');
-
   el.querySelector('.match-char-pip').style.background  = character.color;
   el.querySelector('.match-char-name').textContent      = character.name;
   el.querySelector('.score-who.them').textContent       = character.name;
@@ -56,11 +56,16 @@ function handleMove(humanMove) {
     el.querySelector('.score-value.you').textContent  = result.myScore;
     el.querySelector('.score-value.them').textContent = result.theirScore;
     el.querySelector('.round-outcome').textContent    = outcomeText(humanMove, result.botMove);
-    renderDots(match.getHistory());
-    updateRoundLabel(match.getHistory().length);
+
+    const history = match.getHistory();
+    renderDots(history);
+    updateRoundLabel(history.length);
+
+    saveProgress(charIndex, history);
 
     if (result.round >= character.rounds) {
-      // Last round done — go to summary after a breath
+      const coopRate = history.filter(r => r.humanMove === 'C').length / history.length;
+      markCompleted(character.id, coopRate);
       setTimeout(() => go('summary', { charIndex, match }), 900);
     } else {
       setTimeout(() => {
@@ -75,8 +80,8 @@ function handleMove(humanMove) {
 
 function showToken(who, move) {
   const token = document.querySelector(`#view-match .move-token[data-side="${who}"]`);
-  token.textContent = move === 'C' ? 'Share' : 'Take';
-  token.className   = `move-token ${move === 'C' ? 'share' : 'take'}`;
+  token.textContent  = move === 'C' ? 'Share' : 'Take';
+  token.className    = `move-token ${move === 'C' ? 'share' : 'take'}`;
   token.dataset.side = who;
   requestAnimationFrame(() => requestAnimationFrame(() => token.classList.add('shown')));
 }
@@ -101,13 +106,23 @@ function updateRoundLabel(done) {
 }
 
 function renderDots(history) {
-  const row = document.querySelector('#view-match .dots-row');
+  const row    = document.querySelector('#view-match .dots-row');
   row.innerHTML = '';
+
+  // For Grim, find the first player defection — that dot gets the trigger class
+  const triggerRound = character.strategyId === 'grim'
+    ? history.findIndex(r => r.humanMove === 'D')
+    : -1;
+
   for (let i = 0; i < character.rounds; i++) {
     const dot = document.createElement('span');
     dot.className = 'dot';
-    if (i < history.length)        dot.classList.add(history[i].outcome);
-    else if (i === history.length) dot.classList.add('active');
+    if (i < history.length) {
+      dot.classList.add(history[i].outcome);
+      if (i === triggerRound) dot.classList.add('trigger');
+    } else if (i === history.length) {
+      dot.classList.add('active');
+    }
     row.appendChild(dot);
   }
 }

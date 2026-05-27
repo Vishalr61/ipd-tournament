@@ -18,18 +18,32 @@ export function showSummary(charIndex, match) {
   el.querySelector('.summary-score-value.them').textContent = match.theirScore;
   el.querySelector('.summary-score-who.them').textContent   = char.name;
 
+  // Dots
   const dotsEl = el.querySelector('.summary-dots');
   dotsEl.innerHTML = '';
-  history.forEach(({ outcome }) => {
+  const triggerRound = findGrimTriggerRound(char.strategyId, history);
+  history.forEach(({ outcome }, i) => {
     const dot = document.createElement('span');
     dot.className = `dot ${outcome}`;
+    if (i === triggerRound) dot.classList.add('trigger');
     dotsEl.appendChild(dot);
   });
 
+  // Adaptive summary variant. Grim is binary — any defection gets summaryD.
+  // All others: >50% cooperation → summaryC.
+  let variant;
+  if (char.strategyId === 'grim') {
+    variant = history.some(r => r.humanMove === 'D') ? 'summaryD' : 'summaryC';
+  } else {
+    const coopCount = history.filter(r => r.humanMove === 'C').length;
+    variant = coopCount > history.length / 2 ? 'summaryC' : 'summaryD';
+  }
   el.querySelector('.summary-text').innerHTML =
-    char.summary.map(p => `<p>${p}</p>`).join('');
+    char[variant].map(p => `<p>${p}</p>`).join('');
 
   el.dataset.charIndex = charIndex;
+
+  go('summary');
 }
 
 function onContinue() {
@@ -38,6 +52,11 @@ function onContinue() {
   if (next < CHARACTERS.length) {
     go('intro-card', { characterIndex: next });
   } else {
-    go('reveal');
+    go('campaign-end');
   }
+}
+
+function findGrimTriggerRound(strategyId, history) {
+  if (strategyId !== 'grim') return -1;
+  return history.findIndex(r => r.humanMove === 'D');
 }
