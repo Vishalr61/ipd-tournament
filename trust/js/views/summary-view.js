@@ -14,6 +14,11 @@ export function showSummary(charIndex, match) {
   const history = match.getHistory();
   const el      = document.getElementById('view-summary');
 
+  // Reset shown state so stagger replays correctly
+  el.querySelector('.summary-final-scores').classList.remove('shown');
+  el.querySelector('.summary-dots').classList.remove('shown');
+  el.querySelector('.summary-text').classList.remove('shown');
+
   el.querySelector('.summary-score-value.you').textContent  = match.myScore;
   el.querySelector('.summary-score-value.them').textContent = match.theirScore;
   el.querySelector('.summary-score-who.them').textContent   = char.name;
@@ -44,6 +49,11 @@ export function showSummary(charIndex, match) {
   el.dataset.charIndex = charIndex;
 
   go('summary');
+
+  // Stagger content in after the view transition settles
+  setTimeout(() => el.querySelector('.summary-final-scores').classList.add('shown'), 120);
+  setTimeout(() => el.querySelector('.summary-dots').classList.add('shown'),          400);
+  setTimeout(() => el.querySelector('.summary-text').classList.add('shown'),           680);
 }
 
 function onContinue() {

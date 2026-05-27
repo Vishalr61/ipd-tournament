@@ -23,9 +23,14 @@ export function initDilemma(go) {
     played = true;
     btnShare.disabled = true;
     btnTake.disabled  = true;
-    btnShare.style.display = 'none';
-    btnTake.style.display  = 'none';
-    questionWrap.style.display = 'none';
+
+    // Fade out buttons and question instead of snapping them away
+    [btnShare, btnTake, questionWrap].forEach(el => el.classList.add('fading'));
+    setTimeout(() => {
+      btnShare.style.display     = 'none';
+      btnTake.style.display      = 'none';
+      questionWrap.style.display = 'none';
+    }, 200);
 
     const botMove = 'D'; // scripted: stranger always takes
 

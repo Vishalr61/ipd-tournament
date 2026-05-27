@@ -26,8 +26,11 @@ export function showReveal() {
   buildRevealDOM(el);
 
   if (already) {
-    // Skip animation — show everything immediately
-    el.classList.add('instant');
+    // Double rAF: first rAF schedules the next paint; the actual commit happens
+    // between frames. Second rAF ensures the initial opacity:0 state is painted
+    // before 'instant' triggers the transition to opacity:1.
+    el.classList.remove('instant');
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('instant')));
   } else {
     el.classList.remove('instant');
     runChoreography(el);

@@ -47,21 +47,29 @@ function handleMove(humanMove) {
   // Stage 1: your move appears immediately
   showToken('you', humanMove);
 
-  // Stage 2: their move after 400ms beat
-  setTimeout(() => showToken('them', result.botMove), 400);
+  // Stage 2: thinking indicator on bot token, then their move after 400ms
+  const botToken = document.querySelector('#view-match .move-token[data-side="them"]');
+  botToken.classList.add('thinking');
+  setTimeout(() => {
+    botToken.classList.remove('thinking');
+    showToken('them', result.botMove);
+  }, 400);
 
   // Stage 3: scores + outcome after both shown
   setTimeout(() => {
     const el = document.getElementById('view-match');
-    el.querySelector('.score-value.you').textContent  = result.myScore;
-    el.querySelector('.score-value.them').textContent = result.theirScore;
-    el.querySelector('.round-outcome').textContent    = outcomeText(humanMove, result.botMove);
+    bumpScore('#view-match .score-value.you',  result.myScore);
+    bumpScore('#view-match .score-value.them', result.theirScore);
+    el.querySelector('.round-outcome').textContent = outcomeText(humanMove, result.botMove);
 
     const history = match.getHistory();
     renderDots(history);
     updateRoundLabel(history.length);
 
     saveProgress(charIndex, history);
+
+    // Begin fading tokens out so reset at 1200ms is invisible
+    document.querySelectorAll('#view-match .move-token').forEach(t => t.classList.add('token-fade'));
 
     if (result.round >= character.rounds) {
       const coopRate = history.filter(r => r.humanMove === 'C').length / history.length;
@@ -73,9 +81,19 @@ function handleMove(humanMove) {
         el.querySelector('.round-outcome').textContent = '';
         busy = false;
         setButtons(true);
-      }, 1100);
+      }, 1200);
     }
   }, 820);
+}
+
+function bumpScore(selector, newValue) {
+  const el = document.querySelector(selector);
+  const current = parseInt(el.textContent) || 0;
+  el.textContent = newValue;
+  if (current === newValue) return;
+  el.classList.remove('bump');
+  void el.offsetWidth; // force reflow to restart animation
+  el.classList.add('bump');
 }
 
 function showToken(who, move) {
@@ -120,6 +138,7 @@ function renderDots(history) {
     if (i < history.length) {
       dot.classList.add(history[i].outcome);
       if (i === triggerRound) dot.classList.add('trigger');
+      if (i === history.length - 1) dot.classList.add('new'); // pop animation on latest dot
     } else if (i === history.length) {
       dot.classList.add('active');
     }
