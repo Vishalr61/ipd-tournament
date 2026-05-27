@@ -22,6 +22,7 @@ export function startMatch(idx) {
   busy      = false;
 
   const el = document.getElementById('view-match');
+  el.style.setProperty('--char-color', character.color);
   el.querySelector('.match-char-pip').style.background  = character.color;
   el.querySelector('.match-char-name').textContent      = character.name;
   el.querySelector('.score-who.them').textContent       = character.name;

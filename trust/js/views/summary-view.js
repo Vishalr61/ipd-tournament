@@ -14,6 +14,8 @@ export function showSummary(charIndex, match) {
   const history = match.getHistory();
   const el      = document.getElementById('view-summary');
 
+  el.style.setProperty('--char-color', CHARACTERS[charIndex].color);
+
   // Reset shown state so stagger replays correctly
   el.querySelector('.summary-final-scores').classList.remove('shown');
   el.querySelector('.summary-dots').classList.remove('shown');

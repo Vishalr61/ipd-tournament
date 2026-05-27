@@ -45,8 +45,10 @@ function renderIntroCard(charIndex) {
   const char = CHARACTERS[charIndex];
   const el   = document.getElementById('view-intro-card');
 
+  el.style.setProperty('--char-color', char.color);
   el.querySelector('.char-silhouette-wrap').innerHTML = buildSilhouette(char.id, char.color);
   el.querySelector('.char-name').textContent          = char.name;
+  el.querySelector('.char-name').style.color          = char.color;
   el.querySelector('.char-intro-text').textContent    = char.intro;
   el.querySelector('[data-action="begin-match"]').onclick = () => startMatch(charIndex);
 }
