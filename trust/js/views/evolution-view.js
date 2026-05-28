@@ -1,8 +1,18 @@
 import { CHARACTERS } from '../characters.js';
 import { STRATEGIES } from '../strategies.js';
 
-const ROUNDS       = 50;
-const MS_PER_ROUND = 40; // 50 × 40ms = 2s simulation
+const ROUNDS = 50;
+// Slow first 6 rounds (Marcus leads briefly) then fast — total ~2.1s
+const ROUND_DELAYS = (() => {
+  const delays = [];
+  let t = 0;
+  for (let r = 0; r < ROUNDS; r++) {
+    delays.push(t);
+    t += r < 6 ? 120 : 28;
+  }
+  return delays;
+})();
+const SIM_DURATION = ROUND_DELAYS[ROUNDS - 1] + (ROUNDS < 6 ? 120 : 28);
 const PAYOFFS      = { R: 3, T: 5, P: 1, S: 0 };
 
 const INSIGHTS = [
@@ -142,11 +152,11 @@ function runSimulation(el, timeline) {
 
   const simStart = 80 + rows.length * 80 + 150;
 
-  // Tick through rounds
+  // Tick through rounds — variable speed: slow early (Marcus leads), fast later
   for (let r = 0; r < ROUNDS; r++) {
     setTimeout(() => {
-      const s       = timeline[r];
-      const maxS    = Math.max(...Object.values(s));
+      const s    = timeline[r];
+      const maxS = Math.max(...Object.values(s));
       roundNumEl.textContent = r + 1;
       rows.forEach(row => {
         const val = s[row.dataset.id];
@@ -154,24 +164,21 @@ function runSimulation(el, timeline) {
         row.querySelector('.evo-bar').style.width =
           maxS > 0 ? (val / maxS * 100) + '%' : '0%';
       });
-    }, simStart + r * MS_PER_ROUND);
+    }, simStart + ROUND_DELAYS[r]);
   }
 
-  // Sort after simulation
-  const sortAt = simStart + ROUNDS * MS_PER_ROUND + 350;
+  // Sort after simulation — FLIP animation so rows visibly slide
+  const sortAt = simStart + SIM_DURATION + 350;
   setTimeout(() => {
     el.querySelector('.evo-round-counter').style.opacity = '0';
-    const final = timeline[ROUNDS - 1];
-    sortBoard(el, final);
-
-    // Auto-scroll to insight block
+    sortBoardFlip(el, timeline[ROUNDS - 1]);
     setTimeout(() => {
       el.querySelector('.evo-insight').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 500);
+    }, 650);
   }, sortAt);
 
   // Stagger insight lines (two-step: display then opacity, so transition fires)
-  const insightStart = sortAt + 900;
+  const insightStart = sortAt + 1100;
   el.querySelectorAll('.evo-insight-line').forEach((line, i) => {
     const extraPause = line.classList.contains('evo-thesis') ? 400 : 0;
     setTimeout(() => {
@@ -187,13 +194,43 @@ function runSimulation(el, timeline) {
   }, actionsAt);
 }
 
-function sortBoard(el, scores) {
+function sortBoardFlip(el, scores) {
   const board = el.querySelector('.evo-board');
   const rows  = [...board.querySelectorAll('.evo-row')];
+
+  // 1. Record positions before sort
+  const first = new Map(rows.map(r => [r.dataset.id, r.getBoundingClientRect().top]));
+
+  // 2. Sort DOM and assign ranks
   rows.sort((a, b) => scores[b.dataset.id] - scores[a.dataset.id]);
   rows.forEach((row, i) => {
     row.querySelector('.evo-rank').textContent = i + 1;
     if (i === 0) row.classList.add('evo-winner');
     board.appendChild(row);
   });
+
+  // 3. Record positions after sort (getBoundingClientRect forces reflow)
+  const last = new Map(rows.map(r => [r.dataset.id, r.getBoundingClientRect().top]));
+
+  // 4. Snap rows back to their original visual positions
+  rows.forEach(row => {
+    const delta = first.get(row.dataset.id) - last.get(row.dataset.id);
+    if (delta !== 0) {
+      row.style.transition = 'none';
+      row.style.transform  = `translateY(${delta}px)`;
+    }
+  });
+
+  // 5. Animate to final positions
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    rows.forEach(row => {
+      row.style.transition = 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1)';
+      row.style.transform  = 'translateY(0)';
+    });
+  }));
+
+  // 6. Clean up inline styles after animation completes
+  setTimeout(() => {
+    rows.forEach(row => { row.style.transition = ''; row.style.transform = ''; });
+  }, 700);
 }
