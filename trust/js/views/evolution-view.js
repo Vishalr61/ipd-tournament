@@ -3,9 +3,21 @@ import { STRATEGIES } from '../strategies.js';
 
 // Extra strategies not in the campaign — added to stress-test the reciprocators
 const EXTRA = [
-  { id: 'gtft', name: 'Generous TfT',   revealName: 'Forgives mistakes',  color: '#2dd4bf', strategyId: 'gtft' },
-  { id: 'stft', name: 'Suspicious TfT', revealName: 'Defects first',       color: '#f43f5e', strategyId: 'stft' },
-  { id: 'rand', name: 'Random',         revealName: '50/50 coin flip',     color: '#94a3b8', strategyId: 'rand' },
+  {
+    id: 'gtft', name: 'Generous TfT', revealName: 'Forgives mistakes',
+    desc: 'Plays like Maya — cooperate first, mirror back — but one time in ten, forgives a defection instead of retaliating.',
+    color: '#2dd4bf', strategyId: 'gtft',
+  },
+  {
+    id: 'stft', name: 'Suspicious TfT', revealName: 'Defects first',
+    desc: 'Plays like Maya — but opens with a betrayal to test the waters, then mirrors whatever comes back.',
+    color: '#f43f5e', strategyId: 'stft',
+  },
+  {
+    id: 'rand', name: 'Random', revealName: '50/50 coin flip',
+    desc: 'No memory. No strategy. Pure coin flip every single round.',
+    color: '#94a3b8', strategyId: 'rand',
+  },
 ];
 
 const ALL = [...CHARACTERS, ...EXTRA];
@@ -99,9 +111,22 @@ function buildDOM(el) {
     <div class="evo-header">
       <h1 class="evo-title">Now they compete.</h1>
       <p class="evo-subtitle">
-        <span>${MATCH_COUNT} matches · 50 rounds each</span>
+        <span>Every pair plays 50 rounds — ${MATCH_COUNT} matches total</span>
         <span class="evo-round-counter"> · Round <span class="evo-round-num">0</span></span>
       </p>
+    </div>
+
+    <div class="evo-newcomers">
+      <p class="evo-newcomers-intro">Three new challengers join your six characters:</p>
+      ${EXTRA.map(c => `
+        <div class="evo-newcomer">
+          <span class="evo-pip" style="background:${c.color}; margin-top:3px"></span>
+          <div class="evo-newcomer-text">
+            <span class="evo-newcomer-name" style="color:${c.color}">${c.name}</span>
+            <span class="evo-newcomer-desc">${c.desc}</span>
+          </div>
+        </div>
+      `).join('')}
     </div>
 
     <div class="evo-board">
@@ -146,15 +171,24 @@ function buildDOM(el) {
 // ── Simulation ────────────────────────────────────────────────────────────────
 
 function runSimulation(el, timeline) {
-  const rows       = [...el.querySelectorAll('.evo-row')];
-  const roundNumEl = el.querySelector('.evo-round-num');
+  const rows           = [...el.querySelectorAll('.evo-row')];
+  const roundNumEl     = el.querySelector('.evo-round-num');
+  const newcomerIntro  = el.querySelector('.evo-newcomers-intro');
+  const newcomerRows   = [...el.querySelectorAll('.evo-newcomer')];
 
-  // Stagger rows in
-  rows.forEach((row, i) => {
-    setTimeout(() => row.classList.add('shown'), 80 + i * 80);
+  // Stagger newcomers in first so users understand who's joining
+  setTimeout(() => newcomerIntro.classList.add('shown'), 150);
+  newcomerRows.forEach((row, i) => {
+    setTimeout(() => row.classList.add('shown'), 350 + i * 280);
   });
 
-  const simStart = 80 + rows.length * 80 + 150;
+  // Board rows stagger in after newcomers settle
+  const boardStart = 350 + newcomerRows.length * 280 + 350;
+  rows.forEach((row, i) => {
+    setTimeout(() => row.classList.add('shown'), boardStart + i * 70);
+  });
+
+  const simStart = boardStart + rows.length * 70 + 200;
 
   // Tick through rounds — variable speed: slow early (Marcus leads), fast later
   for (let r = 0; r < ROUNDS; r++) {
