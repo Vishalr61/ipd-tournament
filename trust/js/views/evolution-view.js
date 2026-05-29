@@ -1,5 +1,7 @@
 import { CHARACTERS } from '../characters.js';
-import { STRATEGIES } from '../strategies.js';
+import { REGISTRY }   from '../../../core/registry.js';
+import { compileStrategy } from '../../../core/strategy.js';
+import { runMatch }    from '../../../core/match.js';
 
 // Extra strategies not in the campaign — added to stress-test the reciprocators
 const EXTRA = [
@@ -35,11 +37,11 @@ const ROUND_DELAYS = (() => {
   return delays;
 })();
 const SIM_DURATION = ROUND_DELAYS[ROUNDS - 1] + (ROUNDS < 6 ? 120 : 28);
-const PAYOFFS      = { R: 3, T: 5, P: 1, S: 0 };
+const TOURNAMENT_SEED = 1; // fixed seed → tournament is reproducible across reloads
 
 const INSIGHTS = [
   { text: "Generous TfT won. It plays like Maya — cooperate first, mirror back — but occasionally forgives a defection. In a noisy world, that grace outperformed strict accounting." },
-  { text: "Theo came fifth. One random defection triggered permanent retaliation. Grim Trigger can't tell a mistake from a betrayal. The pool was noisy enough to punish that." },
+  { text: "Theo came fourth. One random defection triggered permanent retaliation. Grim Trigger can't tell a mistake from a betrayal. The pool was noisy enough to punish that." },
   { text: "Marcus came last. The only strategy that never cooperated with anyone, not once." },
   { thesis: true,
     text: "The lesson isn't 'reciprocate.' It's 'reciprocate, but leave room for mistakes. The real world is noisier than any of your six matches.'" },
@@ -72,17 +74,13 @@ function computeHistories() {
 }
 
 function playMatch(idA, idB) {
-  const mA = [], mB = [], histA = [], histB = [];
-  let sa = 0, sb = 0;
-  for (let r = 0; r < ROUNDS; r++) {
-    const a = STRATEGIES[idA].move(mA, mB);
-    const b = STRATEGIES[idB].move(mB, mA);
-    mA.push(a); mB.push(b);
-    const [pa, pb] = score(a, b);
-    sa += pa; sb += pb;
-    histA.push(sa); histB.push(sb);
-  }
-  return { histA, histB };
+  const stratA = compileStrategy(REGISTRY[idA]);
+  const stratB = compileStrategy(REGISTRY[idB]);
+  const result = runMatch(stratA, stratB, { rounds: ROUNDS, masterSeed: TOURNAMENT_SEED });
+  return {
+    histA: result.history.map(h => h.aCumulative),
+    histB: result.history.map(h => h.bCumulative),
+  };
 }
 
 function buildTimeline(matches) {
@@ -95,13 +93,6 @@ function buildTimeline(matches) {
     });
     return s;
   });
-}
-
-function score(a, b) {
-  if (a === 'C' && b === 'C') return [PAYOFFS.R, PAYOFFS.R];
-  if (a === 'C' && b === 'D') return [PAYOFFS.S, PAYOFFS.T];
-  if (a === 'D' && b === 'C') return [PAYOFFS.T, PAYOFFS.S];
-  return [PAYOFFS.P, PAYOFFS.P];
 }
 
 // ── DOM ───────────────────────────────────────────────────────────────────────
