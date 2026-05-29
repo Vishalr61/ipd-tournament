@@ -118,6 +118,14 @@ export const REGISTRY = {
 
 export const REGISTRY_LIST = Object.values(REGISTRY);
 
+// The canonical master seed for the trust app's evolution tournament.
+// LOAD-BEARING: the INSIGHTS copy in trust/js/views/evolution-view.js was
+// written against the specific ranking this seed produces. Don't change
+// this without re-running core/__seed_sweep.mjs and re-verifying every
+// insight line. The assert at the top of evolution-view.js will trip if
+// someone changes this value, so the dependency can't drift silently.
+export const CANONICAL_TOURNAMENT_SEED = 1;
+
 export function getStrategy(id) {
   const s = REGISTRY[id];
   if (!s) throw new Error(`Unknown strategy id: ${id}`);

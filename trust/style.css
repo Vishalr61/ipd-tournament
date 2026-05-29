@@ -1241,6 +1241,16 @@ h1, h2, .heading {
   border-top: 1px solid var(--border);
 }
 
+.evo-mirror {
+  color: var(--fg);
+  padding-top: 32px;
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  font-style: italic;
+  font-size: clamp(1.05rem, 4vw, 1.15rem);
+  line-height: 1.6;
+}
+
 /* ── Utility ───────────────────────────────────────────────────────────────── */
 .spacer { flex: 1; }
 .w-full { width: 100%; }
